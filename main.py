@@ -9,6 +9,9 @@ from backtester.engine import run_backtest
 from reports.performance import performance_report
 from reports.export import export_trades
 
+from database.schema import initialize_database
+
+
 def main():
     if not connect_mt5():
         print("MetaTrader 5 connection failed.")
