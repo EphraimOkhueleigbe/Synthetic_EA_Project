@@ -3,29 +3,13 @@ trade_history = []
 
 def save_trade(trade, result):
 
-    completed_trade = {
+    trade_history.append({
 
-        "direction": trade["direction"],
+        **trade,
 
-        "entry": trade["entry"],
+        **result
 
-        "exit": result["exit"],
-
-        "entry_time": trade.get("entry_time"),
-
-        "exit_time": result["time"],
-
-        "stop_loss": trade["stop_loss"],
-
-        "take_profit": trade["take_profit"],
-
-        "lot_size": trade["lot_size"],
-
-        "result": result["result"]
-
-    }
-
-    trade_history.append(completed_trade)
+    })
 
 
 def get_history():
