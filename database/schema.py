@@ -144,3 +144,7 @@ def initialize_database():
     connection.close()
 
     print("Database initialized successfully.")
+
+
+if __name__ == "__main__":
+    initialize_database()
