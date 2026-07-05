@@ -1,26 +1,28 @@
-from database.repository import Repository
+from database.repositories.project_repository import ProjectRepository
+from database.repositories.strategy_repository import StrategyRepository
+from database.repositories.backtest_repository import BacktestRepository
+from database.repositories.optimization_repository import OptimizationRepository
 
 
 class DashboardController:
 
     def __init__(self):
 
-        self.repo = Repository()
+        self.project_repo = ProjectRepository()
+        self.strategy_repo = StrategyRepository()
+        self.backtest_repo = BacktestRepository()
+        self.optimization_repo = OptimizationRepository()
 
     def load_statistics(self):
 
         return {
 
-            "projects":
-                self.repo.get_project_count(),
+            "projects": self.project_repo.get_count(),
 
-            "strategies":
-                self.repo.get_strategy_count(),
+            "strategies": self.strategy_repo.get_count(),
 
-            "backtests":
-                self.repo.get_backtest_count(),
+            "backtests": self.backtest_repo.get_count(),
 
-            "optimizations":
-                self.repo.get_optimization_count()
+            "optimizations": self.optimization_repo.get_count()
 
         }

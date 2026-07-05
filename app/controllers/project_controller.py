@@ -1,19 +1,16 @@
-from database.repository import Repository
+from app.services.project_service import ProjectService
 
 
 class ProjectController:
 
     def __init__(self):
-        self.repo = Repository()
+        self.service = ProjectService()
 
     def get_projects(self):
-        return self.repo.get_projects()
+        return self.service.get_projects()
 
-    def create_project(self, name, description=""):
-        return self.repo.create_project(
-            name=name,
-            description=description
-        )
+    def create_project(self, name):
+        return self.service.create_project(name)
 
-    def delete_project(self, project_id):
-        return self.repo.delete_project(project_id)
+    def get_project_count(self):
+        return self.service.get_project_count()
