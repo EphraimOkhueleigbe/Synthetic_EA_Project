@@ -1,20 +1,16 @@
-from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QLabel,
     QListWidget,
     QPushButton,
-    QLineEdit
+    QInputDialog,
 )
 
 from app.controllers.project_controller import ProjectController
-from app.dialogs.new_project_dialog import NewProjectDialog
 
 
 class ProjectPanel(QWidget):
-
-    project_selected = Signal(int)
 
     def __init__(self):
 
@@ -26,86 +22,56 @@ class ProjectPanel(QWidget):
 
         title = QLabel("Projects")
 
-        title.setStyleSheet("""
-            font-size:18px;
-            font-weight:bold;
-        """)
-
         layout.addWidget(title)
-
-        self.search = QLineEdit()
-
-        self.search.setPlaceholderText("Search project...")
-
-        layout.addWidget(self.search)
-
-        self.new_button = QPushButton("New Project")
-
-        layout.addWidget(self.new_button)
 
         self.project_list = QListWidget()
 
         layout.addWidget(self.project_list)
 
+        self.new_button = QPushButton("New Project")
+
+        layout.addWidget(self.new_button)
+
         self.new_button.clicked.connect(
-            self.create_project
+            self.new_project
         )
-
-        self.project_list.itemClicked.connect(
-            self.select_project
-        )
-
-        self.search.textChanged.connect(
-            self.filter_projects
-        )
-
-        self.projects = []
 
         self.refresh()
 
+    # =========================================
+
     def refresh(self):
 
-        self.projects = self.controller.get_projects()
-
         self.project_list.clear()
+
+        self.projects = self.controller.get_projects()
 
         for project in self.projects:
 
             self.project_list.addItem(
-                project["name"]
+                project.name
             )
 
-    def create_project(self):
+    # =========================================
 
-        dialog = NewProjectDialog()
+    def new_project(self):
 
-        if dialog.exec():
+        name, ok = QInputDialog.getText(
 
-            self.controller.create_project(
-                dialog.name.text(),
-                dialog.description.toPlainText()
-            )
+            self,
 
-            self.refresh()
+            "New Project",
 
-    def select_project(self, item):
+            "Project Name"
 
-        index = self.project_list.row(item)
-
-        project = self.projects[index]
-
-        self.project_selected.emit(
-            project["id"]
         )
 
-    def filter_projects(self, text):
+        if not ok:
+            return
 
-        self.project_list.clear()
+        if not name.strip():
+            return
 
-        for project in self.projects:
+        self.controller.create_project(name)
 
-            if text.lower() in project["name"].lower():
-
-                self.project_list.addItem(
-                    project["name"]
-                )
+        self.refresh()
