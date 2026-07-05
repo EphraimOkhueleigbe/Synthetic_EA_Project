@@ -6,6 +6,8 @@ from PySide6.QtWidgets import (
 )
 
 from app.ui.dashboard import Dashboard
+from app.ui.project_manager import ProjectManager
+from app.ui.strategy_manager import StrategyManager
 
 
 class Workspace(QWidget):
@@ -28,11 +30,19 @@ class Workspace(QWidget):
 
         layout.addWidget(self.stack)
 
+        # =====================================
+        # Real Pages
+        # =====================================
+
         self.dashboard = Dashboard()
 
-        self.projects = QLabel("Projects Page")
+        self.projects = ProjectManager()
 
-        self.strategies = QLabel("Strategies Page")
+        self.strategies = StrategyManager()
+
+        # =====================================
+        # Placeholder Pages
+        # =====================================
 
         self.backtests = QLabel("Backtests Page")
 
@@ -42,22 +52,28 @@ class Workspace(QWidget):
 
         self.settings = QLabel("Settings Page")
 
+        # =====================================
+        # Stack
+        # =====================================
+
         self.stack.addWidget(self.dashboard)
+
         self.stack.addWidget(self.projects)
+
         self.stack.addWidget(self.strategies)
+
         self.stack.addWidget(self.backtests)
+
         self.stack.addWidget(self.optimizer)
+
         self.stack.addWidget(self.reports)
+
         self.stack.addWidget(self.settings)
 
         self.show_page(self.DASHBOARD)
 
-    # ======================================
+    # =====================================
 
     def show_page(self, page):
 
-        print(f"Switching to page: {page}")
-
         self.stack.setCurrentIndex(page)
-
-        print(f"Current index: {self.stack.currentIndex()}")

@@ -4,16 +4,21 @@ from database.repositories.project_repository import ProjectRepository
 class ProjectService:
 
     def __init__(self):
+
         self.repository = ProjectRepository()
 
-    def create_project(self, name):
-
-        return self.repository.create(name)
-
-    def get_projects(self):
+    def get_all(self):
 
         return self.repository.get_all()
 
-    def get_project_count(self):
+    def create(self, name):
+
+        return self.repository.create(name)
+
+    def delete(self, project_id):
+
+        return self.repository.delete(project_id)
+
+    def get_count(self):
 
         return self.repository.get_count()

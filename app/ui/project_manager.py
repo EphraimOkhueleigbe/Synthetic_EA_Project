@@ -4,12 +4,14 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QListWidget
+    QListWidget,
+    QMessageBox
 )
 
 from PySide6.QtCore import Qt
 
 from app.controllers.project_controller import ProjectController
+from app.ui.dialogs.new_project_dialog import NewProjectDialog
 
 
 class ProjectManager(QWidget):
@@ -22,9 +24,9 @@ class ProjectManager(QWidget):
 
         layout = QVBoxLayout(self)
 
-        # ------------------------
+        # ----------------------------------------
         # Header
-        # ------------------------
+        # ----------------------------------------
 
         header = QHBoxLayout()
 
@@ -47,17 +49,27 @@ class ProjectManager(QWidget):
 
         layout.addLayout(header)
 
-        # ------------------------
+        # ----------------------------------------
         # Project List
-        # ------------------------
+        # ----------------------------------------
 
         self.project_list = QListWidget()
 
         layout.addWidget(self.project_list)
 
+        # ----------------------------------------
+        # Events
+        # ----------------------------------------
+
+        self.new_button.clicked.connect(
+            self.create_project
+        )
+
         self.refresh()
 
-    # =====================================
+    # ==========================================
+    # Refresh
+    # ==========================================
 
     def refresh(self):
 
@@ -68,3 +80,29 @@ class ProjectManager(QWidget):
         for project in projects:
 
             self.project_list.addItem(project.name)
+
+    # ==========================================
+    # Create Project
+    # ==========================================
+
+    def create_project(self):
+
+        dialog = NewProjectDialog()
+
+        if dialog.exec():
+
+            name = dialog.project_name
+
+            if not name:
+
+                QMessageBox.warning(
+                    self,
+                    "Invalid Name",
+                    "Please enter a project name."
+                )
+
+                return
+
+            self.controller.create_project(name)
+
+            self.refresh()
