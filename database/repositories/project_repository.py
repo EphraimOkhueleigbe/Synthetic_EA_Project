@@ -1,11 +1,10 @@
-from database.db import get_connection
+from database.repositories.base_repository import BaseRepository
 
 
-class Repository:
+class ProjectRepository(BaseRepository):
 
     def __init__(self):
-        self.conn = get_connection()
-        self.cursor = self.conn.cursor()
+        super().__init__()
 
     # ==========================================
     # PROJECTS
@@ -21,7 +20,7 @@ class Repository:
             (name,)
         )
 
-        self.conn.commit()
+        self.commit()
 
         return self.cursor.lastrowid
 
@@ -104,7 +103,7 @@ class Repository:
 
         )
 
-        self.conn.commit()
+        self.commit()
 
         return self.cursor.lastrowid
 
@@ -189,7 +188,7 @@ class Repository:
 
         )
 
-        self.conn.commit()
+        self.commit()
 
     def get_trades(self, backtest_id):
 
@@ -210,3 +209,42 @@ class Repository:
         )
 
         return self.cursor.fetchall()
+    
+def get_project_count(self):
+
+    self.cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM projects
+    """)
+
+    return self.cursor.fetchone()["total"]
+
+
+def get_strategy_count(self):
+
+    self.cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM strategies
+    """)
+
+    return self.cursor.fetchone()["total"]
+
+
+def get_backtest_count(self):
+
+    self.cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM backtests
+    """)
+
+    return self.cursor.fetchone()["total"]
+
+
+def get_optimization_count(self):
+
+    self.cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM optimizations
+    """)
+
+    return self.cursor.fetchone()["total"]
