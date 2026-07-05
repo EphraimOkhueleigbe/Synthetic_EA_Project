@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QPushButton,
     QListWidget,
+    QListWidgetItem,
     QMessageBox
 )
 
@@ -24,15 +25,13 @@ class ProjectManager(QWidget):
 
         layout = QVBoxLayout(self)
 
-        # ----------------------------------------
+        # ==========================================
         # Header
-        # ----------------------------------------
+        # ==========================================
 
         header = QHBoxLayout()
 
         title = QLabel("Projects")
-
-        title.setAlignment(Qt.AlignLeft)
 
         title.setStyleSheet("""
             font-size:24px;
@@ -49,26 +48,28 @@ class ProjectManager(QWidget):
 
         layout.addLayout(header)
 
-        # ----------------------------------------
+        # ==========================================
         # Project List
-        # ----------------------------------------
+        # ==========================================
 
         self.project_list = QListWidget()
 
         layout.addWidget(self.project_list)
 
-        # ----------------------------------------
+        # ==========================================
         # Events
-        # ----------------------------------------
+        # ==========================================
 
         self.new_button.clicked.connect(
             self.create_project
         )
 
+        self.project_list.itemDoubleClicked.connect(
+            self.open_project
+        )
+
         self.refresh()
 
-    # ==========================================
-    # Refresh
     # ==========================================
 
     def refresh(self):
@@ -79,10 +80,13 @@ class ProjectManager(QWidget):
 
         for project in projects:
 
-            self.project_list.addItem(project.name)
+            item = QListWidgetItem(project.name)
 
-    # ==========================================
-    # Create Project
+            # Store the whole Project object
+            item.setData(Qt.UserRole, project)
+
+            self.project_list.addItem(item)
+
     # ==========================================
 
     def create_project(self):
@@ -98,7 +102,7 @@ class ProjectManager(QWidget):
                 QMessageBox.warning(
                     self,
                     "Invalid Name",
-                    "Please enter a project name."
+                    "Project name cannot be empty."
                 )
 
                 return
@@ -106,3 +110,35 @@ class ProjectManager(QWidget):
             self.controller.create_project(name)
 
             self.refresh()
+
+    # ==========================================
+
+    def selected_project(self):
+
+        item = self.project_list.currentItem()
+
+        if item is None:
+
+            return None
+
+        return item.data(Qt.UserRole)
+
+    # ==========================================
+
+    def open_project(self, item):
+
+        project = item.data(Qt.UserRole)
+
+        print()
+
+        print("=" * 40)
+
+        print("PROJECT OPENED")
+
+        print(f"ID   : {project.id}")
+
+        print(f"NAME : {project.name}")
+
+        print("=" * 40)
+
+        print()
