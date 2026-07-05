@@ -1,4 +1,5 @@
 from database.repositories.base_repository import BaseRepository
+from database.models.project import Project
 
 
 class ProjectRepository(BaseRepository):
@@ -25,21 +26,23 @@ class ProjectRepository(BaseRepository):
         self.cursor.execute(
             """
             SELECT *
-
             FROM projects
-
             ORDER BY created_at DESC
             """
         )
 
-        return self.cursor.fetchall()
+        rows = self.cursor.fetchall()
+
+        return [
+            Project.from_row(row)
+            for row in rows
+        ]
 
     def get_count(self):
 
         self.cursor.execute(
             """
             SELECT COUNT(*) AS total
-
             FROM projects
             """
         )

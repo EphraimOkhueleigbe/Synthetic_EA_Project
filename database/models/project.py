@@ -1,23 +1,19 @@
 from dataclasses import dataclass
-from datetime import datetime
+from typing import Optional
 
 from database.models.base_model import BaseModel
 
 
-@dataclass
-class Project(BaseModel):
+@classmethod
+def from_row(cls, row):
 
-    id: int | None = None
+    if row is None:
+        return None
 
-    name: str = ""
+    data = dict(row)
 
-    description: str = ""
+    data["description"] = data.get("description") or ""
+    data["created_at"] = data.get("created_at") or ""
+    data["last_modified"] = data.get("last_modified") or ""
 
-    created_at: datetime | None = None
-
-    last_modified: datetime | None = None
-
-    @classmethod
-    def from_row(cls, row):
-
-        return cls(**dict(row))
+    return cls(**data)
