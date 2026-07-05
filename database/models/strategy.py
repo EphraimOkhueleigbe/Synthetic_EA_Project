@@ -1,22 +1,50 @@
 from dataclasses import dataclass
-from datetime import datetime
+from typing import Optional
+
+from database.models.base_model import BaseModel
 
 
 @dataclass
-class Strategy:
+class Strategy(BaseModel):
 
-    id: int | None = None
+    id: Optional[int] = None
 
-    project_id: int | None = None
+    project_id: Optional[int] = None
 
     name: str = ""
 
-    ema_fast: int = 9
+    d1_fast_ema: int = 9
+    d1_slow_ema: int = 18
 
-    ema_slow: int = 18
+    m30_fast_ema: int = 9
+    m30_slow_ema: int = 18
 
     risk_formula: str = ""
 
-    take_profit: float = 0
+    stop_loss_type: str = ""
+    stop_loss_value: float = 0.0
 
-    created_at: datetime | None = None
+    take_profit_type: str = ""
+    take_profit_value: float = 0.0
+
+    trade_direction: str = "Trend"
+
+    active: int = 1
+
+    created_at: str = ""
+    updated_at: str = ""
+
+    @classmethod
+    def from_row(cls, row):
+
+        if row is None:
+            return None
+
+        data = dict(row)
+
+        for key, value in data.items():
+            if value is None:
+                if isinstance(getattr(cls, key, ""), str):
+                    data[key] = ""
+
+        return cls(**data)

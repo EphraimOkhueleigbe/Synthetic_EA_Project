@@ -1,150 +1,36 @@
-from database.db import get_connection
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS strategies (
 
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-def initialize_database():
+    project_id INTEGER NOT NULL,
 
-    connection = get_connection()
-    cursor = connection.cursor()
+    name TEXT NOT NULL,
 
-    # =====================================
-    # PROJECTS
-    # =====================================
+    d1_fast_ema INTEGER NOT NULL DEFAULT 9,
+    d1_slow_ema INTEGER NOT NULL DEFAULT 18,
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS projects (
+    m30_fast_ema INTEGER NOT NULL DEFAULT 9,
+    m30_slow_ema INTEGER NOT NULL DEFAULT 18,
 
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    risk_formula TEXT,
 
-        name TEXT NOT NULL,
+    stop_loss_type TEXT,
+    stop_loss_value REAL,
 
-        description TEXT,
+    take_profit_type TEXT,
+    take_profit_value REAL,
 
-        created_at TEXT,
+    trade_direction TEXT DEFAULT 'Trend',
 
-        last_modified TEXT
+    active INTEGER DEFAULT 1,
 
-    );
-    """)
+    created_at TEXT,
+    updated_at TEXT,
 
-    # =====================================
-    # STRATEGIES
-    # =====================================
+    FOREIGN KEY(project_id)
+        REFERENCES projects(id)
+        ON DELETE CASCADE
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS strategies (
-
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-        project_id INTEGER,
-
-        name TEXT,
-
-        ema_fast INTEGER,
-
-        ema_slow INTEGER,
-
-        risk_formula TEXT,
-
-        take_profit REAL,
-
-        created_at TEXT
-
-    );
-    """)
-
-    # =====================================
-    # BACKTESTS
-    # =====================================
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS backtests (
-
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-        strategy_id INTEGER,
-
-        test_date TEXT,
-
-        symbol TEXT,
-
-        timeframe TEXT,
-
-        starting_balance REAL,
-
-        ending_balance REAL,
-
-        net_profit REAL,
-
-        win_rate REAL,
-
-        profit_factor REAL,
-
-        max_drawdown REAL
-
-    );
-    """)
-
-    # =====================================
-    # TRADES
-    # =====================================
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS trades (
-
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-        backtest_id INTEGER,
-
-        direction TEXT,
-
-        entry_price REAL,
-
-        exit_price REAL,
-
-        stop_loss REAL,
-
-        take_profit REAL,
-
-        profit REAL,
-
-        result TEXT,
-
-        entry_time TEXT,
-
-        exit_time TEXT
-
-    );
-    """)
-
-    # =====================================
-    # OPTIMIZATIONS
-    # =====================================
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS optimizations (
-
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-        strategy_id INTEGER,
-
-        optimization_date TEXT,
-
-        best_parameters TEXT,
-
-        score REAL,
-
-        profit REAL,
-
-        drawdown REAL
-
-    );
-    """)
-
-    connection.commit()
-    connection.close()
-
-    print("Database initialized successfully.")
-
-
-if __name__ == "__main__":
-    initialize_database()
+);
+""")
