@@ -16,6 +16,4 @@ class Workspace(QWidget):
 
         self.dashboard = Dashboard()
 
-        layout.addWidget(
-            self.dashboard
-        )
+        layout.addWidget(self.dashboard)

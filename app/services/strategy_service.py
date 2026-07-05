@@ -4,13 +4,45 @@ from database.repositories.strategy_repository import StrategyRepository
 class StrategyService:
 
     def __init__(self):
+
         self.repository = StrategyRepository()
 
-    def create_strategy(self, *args, **kwargs):
-        return self.repository.create(*args, **kwargs)
+    # ==========================================
+    # CREATE
+    # ==========================================
 
-    def get_strategies(self):
+    def create(self, strategy):
+
+        return self.repository.create(strategy)
+
+    # ==========================================
+    # READ
+    # ==========================================
+
+    def get_all(self):
+
         return self.repository.get_all()
 
-    def get_strategy_count(self):
+    def get_by_project(self, project_id):
+
+        return self.repository.get_by_project(project_id)
+
+    def get_count(self):
+
         return self.repository.get_count()
+
+    # ==========================================
+    # UPDATE
+    # ==========================================
+
+    def update(self, strategy):
+
+        self.repository.update(strategy)
+
+    # ==========================================
+    # DELETE
+    # ==========================================
+
+    def delete(self, strategy_id):
+
+        self.repository.delete(strategy_id)
