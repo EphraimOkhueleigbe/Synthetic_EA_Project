@@ -44,11 +44,8 @@ class Dashboard(QWidget):
         grid = QGridLayout()
 
         self.project_card = StatCard("Projects")
-
         self.strategy_card = StatCard("Strategies")
-
         self.backtest_card = StatCard("Backtests")
-
         self.optimization_card = StatCard("Optimizations")
 
         grid.addWidget(self.project_card, 0, 0)
@@ -97,6 +94,24 @@ class Dashboard(QWidget):
     # ==========================================
 
     def project_changed(self, project):
+
+        if project is None:
+
+            self.title.setText(
+                "SyntheticQuant Dashboard\n\nNo Project Selected"
+            )
+
+            print()
+
+            print("=" * 50)
+
+            print("Dashboard: No Active Project")
+
+            print("=" * 50)
+
+            print()
+
+            return
 
         self.title.setText(
             f"SyntheticQuant Dashboard\n\nCurrent Project: {project.name}"

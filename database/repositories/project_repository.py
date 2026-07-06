@@ -7,6 +7,8 @@ class ProjectRepository(BaseRepository):
     def __init__(self):
         super().__init__()
 
+    # ==========================================
+
     def create(self, name):
 
         self.cursor.execute(
@@ -20,6 +22,8 @@ class ProjectRepository(BaseRepository):
         self.commit()
 
         return self.cursor.lastrowid
+
+    # ==========================================
 
     def get_all(self):
 
@@ -37,6 +41,22 @@ class ProjectRepository(BaseRepository):
             Project.from_row(row)
             for row in rows
         ]
+
+    # ==========================================
+
+    def delete(self, project_id):
+
+        self.cursor.execute(
+            """
+            DELETE FROM projects
+            WHERE id = ?
+            """,
+            (project_id,)
+        )
+
+        self.commit()
+
+    # ==========================================
 
     def get_count(self):
 

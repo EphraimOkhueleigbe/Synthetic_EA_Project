@@ -15,6 +15,7 @@ from app.controllers.project_controller import ProjectController
 from app.ui.dialogs.new_project_dialog import NewProjectDialog
 from app.core.app_state import app_state
 
+
 class ProjectManager(QWidget):
 
     def __init__(self):
@@ -39,12 +40,12 @@ class ProjectManager(QWidget):
         """)
 
         self.new_button = QPushButton("New Project")
+        self.delete_button = QPushButton("Delete Project")
 
         header.addWidget(title)
-
         header.addStretch()
-
         header.addWidget(self.new_button)
+        header.addWidget(self.delete_button)
 
         layout.addLayout(header)
 
@@ -62,6 +63,10 @@ class ProjectManager(QWidget):
 
         self.new_button.clicked.connect(
             self.create_project
+        )
+
+        self.delete_button.clicked.connect(
+            self.delete_project
         )
 
         self.project_list.itemDoubleClicked.connect(
@@ -82,7 +87,6 @@ class ProjectManager(QWidget):
 
             item = QListWidgetItem(project.name)
 
-            # Store the whole Project object
             item.setData(Qt.UserRole, project)
 
             self.project_list.addItem(item)
@@ -110,6 +114,46 @@ class ProjectManager(QWidget):
             self.controller.create_project(name)
 
             self.refresh()
+
+    # ==========================================
+
+    def delete_project(self):
+
+        project = self.selected_project()
+
+        if project is None:
+
+            QMessageBox.information(
+                self,
+                "No Project Selected",
+                "Please select a project first."
+            )
+
+            return
+
+        reply = QMessageBox.question(
+            self,
+            "Delete Project",
+            f"Delete '{project.name}'?\n\nThis action cannot be undone.",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply != QMessageBox.Yes:
+
+            return
+
+        self.controller.delete_project(project.id)
+
+        # Clear active project if it was deleted
+        if (
+            app_state.current_project is not None
+            and
+            app_state.current_project.id == project.id
+        ):
+            app_state.set_current_project(None)
+
+        self.refresh()
 
     # ==========================================
 
