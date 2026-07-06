@@ -6,13 +6,18 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QListWidget,
+    QListWidgetItem,
     QSpinBox,
     QDoubleSpinBox,
     QMessageBox
 )
 
+from PySide6.QtCore import Qt
+
 from database.models.strategy import Strategy
+
 from app.controllers.strategy_controller import StrategyController
+from app.core.app_state import app_state
 
 
 class StrategyManager(QWidget):
@@ -25,25 +30,42 @@ class StrategyManager(QWidget):
 
         self.current_strategy = None
 
+        self.strategies = []
+
         self.build_ui()
 
-        self.load_strategies()
+        app_state.project_changed.connect(
+            self.project_changed
+        )
 
-    # =====================================================
+        self.disable_editor()
+
+    # ======================================================
 
     def build_ui(self):
 
         layout = QVBoxLayout(self)
 
-        # ---------------------------------
+        header = QHBoxLayout()
+
+        self.title = QLabel("Strategies")
+
+        self.title.setStyleSheet("""
+            font-size:24px;
+            font-weight:bold;
+        """)
+
+        header.addWidget(self.title)
+
+        header.addStretch()
+
+        layout.addLayout(header)
 
         layout.addWidget(QLabel("Strategy Name"))
 
         self.name = QLineEdit()
 
         layout.addWidget(self.name)
-
-        # ---------------------------------
 
         layout.addWidget(QLabel("D1 Fast EMA"))
 
@@ -55,8 +77,6 @@ class StrategyManager(QWidget):
 
         layout.addWidget(self.d1_fast)
 
-        # ---------------------------------
-
         layout.addWidget(QLabel("D1 Slow EMA"))
 
         self.d1_slow = QSpinBox()
@@ -66,8 +86,6 @@ class StrategyManager(QWidget):
         self.d1_slow.setValue(18)
 
         layout.addWidget(self.d1_slow)
-
-        # ---------------------------------
 
         layout.addWidget(QLabel("M30 Fast EMA"))
 
@@ -79,8 +97,6 @@ class StrategyManager(QWidget):
 
         layout.addWidget(self.m30_fast)
 
-        # ---------------------------------
-
         layout.addWidget(QLabel("M30 Slow EMA"))
 
         self.m30_slow = QSpinBox()
@@ -91,17 +107,11 @@ class StrategyManager(QWidget):
 
         layout.addWidget(self.m30_slow)
 
-        # ---------------------------------
-
         layout.addWidget(QLabel("Risk Formula"))
 
-        self.risk = QLineEdit()
-
-        self.risk.setText("Balance / 0.0008")
+        self.risk = QLineEdit("Balance / 0.0008")
 
         layout.addWidget(self.risk)
-
-        # ---------------------------------
 
         layout.addWidget(QLabel("Take Profit"))
 
@@ -113,13 +123,17 @@ class StrategyManager(QWidget):
 
         layout.addWidget(self.tp)
 
-        # ---------------------------------
+        buttons = QHBoxLayout()
 
         self.save_button = QPushButton("Save Strategy")
 
-        layout.addWidget(self.save_button)
+        self.delete_button = QPushButton("Delete Strategy")
 
-        # ---------------------------------
+        buttons.addWidget(self.save_button)
+
+        buttons.addWidget(self.delete_button)
+
+        layout.addLayout(buttons)
 
         layout.addWidget(QLabel("Strategies"))
 
@@ -127,39 +141,74 @@ class StrategyManager(QWidget):
 
         layout.addWidget(self.list)
 
-        # ---------------------------------
+        self.save_button.clicked.connect(
+            self.save_strategy
+        )
 
-        self.delete_button = QPushButton("Delete Selected")
+        self.delete_button.clicked.connect(
+            self.delete_strategy
+        )
 
-        layout.addWidget(self.delete_button)
+        self.list.itemClicked.connect(
+            self.strategy_selected
+        )
 
-        # ---------------------------------
+    # ======================================================
 
-        self.save_button.clicked.connect(self.save_strategy)
+    def project_changed(self, project):
 
-        self.delete_button.clicked.connect(self.delete_strategy)
+        if project is None:
 
-        self.list.itemClicked.connect(self.strategy_selected)
+            self.disable_editor()
 
-    # =====================================================
+            self.list.clear()
+
+            self.title.setText("Strategies")
+
+            return
+
+        self.title.setText(
+            f"Strategies - {project.name}"
+        )
+
+        self.enable_editor()
+
+        self.load_strategies()
+
+    # ======================================================
 
     def load_strategies(self):
 
         self.list.clear()
 
-        self.strategies = self.controller.get_all()
+        print("=" * 50)
+        print("Loading strategies for project:", app_state.current_project.id)
+
+        self.strategies = self.controller.get_by_project(
+            app_state.current_project.id
+        )
+
+        print("Strategies found:", len(self.strategies))
+        print("=" * 50)
 
         for strategy in self.strategies:
 
-            self.list.addItem(strategy.name)
+            item = QListWidgetItem(strategy.name)
 
-    # =====================================================
+            item.setData(Qt.UserRole, strategy)
+
+            self.list.addItem(item)
+
+    # ======================================================
 
     def save_strategy(self):
 
+        if app_state.current_project is None:
+            return
+
         strategy = Strategy(
 
-            project_id=1,
+            project_id=app_state.current_project.id,
 
             name=self.name.text(),
 
@@ -177,27 +226,27 @@ class StrategyManager(QWidget):
 
         )
 
+        print("=" * 50)
+        print("Saving Strategy")
+        print("Project ID:", strategy.project_id)
+        print("Strategy:", strategy.name)
+        print("=" * 50)
+
         self.controller.create(strategy)
 
         self.load_strategies()
 
         QMessageBox.information(
-
             self,
-
             "Saved",
-
             "Strategy saved successfully."
-
         )
 
-    # =====================================================
+    # ======================================================
 
     def strategy_selected(self, item):
 
-        index = self.list.currentRow()
-
-        strategy = self.strategies[index]
+        strategy = item.data(Qt.UserRole)
 
         self.current_strategy = strategy
 
@@ -215,11 +264,18 @@ class StrategyManager(QWidget):
 
         self.tp.setValue(strategy.take_profit_value)
 
-    # =====================================================
+    # ======================================================
 
     def delete_strategy(self):
 
         if self.current_strategy is None:
+
+            QMessageBox.information(
+                self,
+                "No Strategy",
+                "Please select a strategy."
+            )
+
             return
 
         self.controller.delete(self.current_strategy.id)
@@ -227,3 +283,27 @@ class StrategyManager(QWidget):
         self.current_strategy = None
 
         self.load_strategies()
+
+    # ======================================================
+
+    def disable_editor(self):
+
+        self.save_button.setEnabled(False)
+
+        self.delete_button.setEnabled(False)
+
+        self.list.setEnabled(False)
+
+        self.title.setText(
+            "Strategies\n\nNo active project selected."
+        )
+
+    # ======================================================
+
+    def enable_editor(self):
+
+        self.save_button.setEnabled(True)
+
+        self.delete_button.setEnabled(True)
+
+        self.list.setEnabled(True)

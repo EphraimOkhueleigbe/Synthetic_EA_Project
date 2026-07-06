@@ -51,7 +51,7 @@ class ProjectRepository(BaseRepository):
             UPDATE projects
             SET
                 name = ?,
-                last_modified = CURRENT_TIMESTAMP
+                updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
             """,
             (

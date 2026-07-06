@@ -15,7 +15,7 @@ class Project(BaseModel):
 
     created_at: str = ""
 
-    last_modified: str = ""
+    updated_at: str = ""
 
     @classmethod
     def from_row(cls, row):
@@ -26,7 +26,9 @@ class Project(BaseModel):
         data = dict(row)
 
         data["description"] = data.get("description") or ""
+
         data["created_at"] = data.get("created_at") or ""
-        data["last_modified"] = data.get("last_modified") or ""
+
+        data["updated_at"] = data.get("updated_at") or ""
 
         return cls(**data)
