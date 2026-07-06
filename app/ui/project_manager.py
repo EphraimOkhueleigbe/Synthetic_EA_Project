@@ -81,7 +81,7 @@ class ProjectManager(QWidget):
 
         self.project_list.clear()
 
-        projects = self.controller.get_projects()
+        projects = self.controller.get_all()
 
         for project in projects:
 
@@ -111,7 +111,7 @@ class ProjectManager(QWidget):
 
                 return
 
-            self.controller.create_project(name)
+            self.controller.create(name)
 
             self.refresh()
 
@@ -143,7 +143,7 @@ class ProjectManager(QWidget):
 
             return
 
-        self.controller.delete_project(project.id)
+        self.controller.delete(project.id)
 
         # Clear active project if it was deleted
         if (

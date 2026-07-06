@@ -7,14 +7,18 @@ class ProjectController:
 
         self.service = ProjectService()
 
-    def get_projects(self):
-
-        return self.service.get_all()
-
-    def create_project(self, name):
+    def create(self, name):
 
         return self.service.create(name)
 
-    def delete_project(self, project_id):
+    def get_all(self):
+
+        return self.service.get_all()
+
+    def delete(self, project_id):
 
         return self.service.delete(project_id)
+
+    def get_count(self):
+
+        return self.service.get_count()
