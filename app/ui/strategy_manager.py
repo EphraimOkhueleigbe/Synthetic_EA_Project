@@ -157,6 +157,12 @@ class StrategyManager(QWidget):
 
     def project_changed(self, project):
 
+        print()
+        print("=" * 50)
+        print("StrategyManager.project_changed() called")
+        print("Project:", project)
+        print("=" * 50)
+
         if project is None:
 
             self.disable_editor()
@@ -173,8 +179,9 @@ class StrategyManager(QWidget):
 
         self.enable_editor()
 
-        self.load_strategies()
+        print("Save Enabled:", self.save_button.isEnabled())
 
+        self.load_strategies()
     # ======================================================
 
     def load_strategies(self):
