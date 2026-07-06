@@ -9,6 +9,7 @@ from PySide6.QtCore import Qt
 
 from app.controllers.dashboard_controller import DashboardController
 from app.ui.widgets.stat_card import StatCard
+from app.core.app_state import app_state
 
 
 class Dashboard(QWidget):
@@ -21,16 +22,24 @@ class Dashboard(QWidget):
 
         layout = QVBoxLayout(self)
 
-        title = QLabel("SyntheticQuant Dashboard")
+        # ==========================================
+        # Dashboard Title
+        # ==========================================
 
-        title.setAlignment(Qt.AlignCenter)
+        self.title = QLabel("SyntheticQuant Dashboard")
 
-        title.setStyleSheet("""
+        self.title.setAlignment(Qt.AlignCenter)
+
+        self.title.setStyleSheet("""
             font-size:30px;
             font-weight:bold;
         """)
 
-        layout.addWidget(title)
+        layout.addWidget(self.title)
+
+        # ==========================================
+        # Statistics Grid
+        # ==========================================
 
         grid = QGridLayout()
 
@@ -42,14 +51,28 @@ class Dashboard(QWidget):
 
         self.optimization_card = StatCard("Optimizations")
 
-        grid.addWidget(self.project_card,0,0)
-        grid.addWidget(self.strategy_card,0,1)
-        grid.addWidget(self.backtest_card,1,0)
-        grid.addWidget(self.optimization_card,1,1)
+        grid.addWidget(self.project_card, 0, 0)
+        grid.addWidget(self.strategy_card, 0, 1)
+        grid.addWidget(self.backtest_card, 1, 0)
+        grid.addWidget(self.optimization_card, 1, 1)
 
         layout.addLayout(grid)
 
+        # ==========================================
+        # Initial Load
+        # ==========================================
+
         self.refresh()
+
+        # ==========================================
+        # Listen for Active Project Changes
+        # ==========================================
+
+        app_state.project_changed.connect(
+            self.project_changed
+        )
+
+    # ==========================================
 
     def refresh(self):
 
@@ -70,3 +93,23 @@ class Dashboard(QWidget):
         self.optimization_card.set_value(
             stats["optimizations"]
         )
+
+    # ==========================================
+
+    def project_changed(self, project):
+
+        self.title.setText(
+            f"SyntheticQuant Dashboard\n\nCurrent Project: {project.name}"
+        )
+
+        print()
+
+        print("=" * 50)
+
+        print("Dashboard received active project")
+
+        print(f"Project: {project.name}")
+
+        print("=" * 50)
+
+        print()

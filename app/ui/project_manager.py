@@ -13,7 +13,7 @@ from PySide6.QtCore import Qt
 
 from app.controllers.project_controller import ProjectController
 from app.ui.dialogs.new_project_dialog import NewProjectDialog
-
+from app.core.app_state import app_state
 
 class ProjectManager(QWidget):
 
@@ -129,16 +129,16 @@ class ProjectManager(QWidget):
 
         project = item.data(Qt.UserRole)
 
+        app_state.set_current_project(project)
+
         print()
 
-        print("=" * 40)
+        print("=" * 50)
 
-        print("PROJECT OPENED")
+        print(f"ACTIVE PROJECT: {project.name}")
 
-        print(f"ID   : {project.id}")
+        print(f"PROJECT ID: {project.id}")
 
-        print(f"NAME : {project.name}")
-
-        print("=" * 40)
+        print("=" * 50)
 
         print()
