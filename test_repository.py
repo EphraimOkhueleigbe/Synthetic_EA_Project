@@ -1,6 +1,6 @@
-from database.repository import Repository
+from database.repositories.project_repository import ProjectRepository
 
-repo = Repository()
+repo = ProjectRepository()
 
 project_id = repo.create_project(
     "Synthetic Quant"

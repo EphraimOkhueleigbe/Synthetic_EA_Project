@@ -15,6 +15,13 @@ class ProjectService:
 
         return self.repository.create(name)
 
+    def update(self, project_id, name):
+
+        return self.repository.update(
+            project_id,
+            name
+        )
+
     def delete(self, project_id):
 
         return self.repository.delete(project_id)

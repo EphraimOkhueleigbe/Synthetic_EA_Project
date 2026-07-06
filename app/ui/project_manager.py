@@ -40,11 +40,13 @@ class ProjectManager(QWidget):
         """)
 
         self.new_button = QPushButton("New Project")
+        self.rename_button = QPushButton("Rename Project")
         self.delete_button = QPushButton("Delete Project")
 
         header.addWidget(title)
         header.addStretch()
         header.addWidget(self.new_button)
+        header.addWidget(self.rename_button)
         header.addWidget(self.delete_button)
 
         layout.addLayout(header)
@@ -63,6 +65,10 @@ class ProjectManager(QWidget):
 
         self.new_button.clicked.connect(
             self.create_project
+        )
+
+        self.rename_button.clicked.connect(
+            self.rename_project
         )
 
         self.delete_button.clicked.connect(
@@ -117,6 +123,56 @@ class ProjectManager(QWidget):
 
     # ==========================================
 
+    def rename_project(self):
+
+        project = self.selected_project()
+
+        if project is None:
+
+            QMessageBox.information(
+                self,
+                "No Project Selected",
+                "Please select a project first."
+            )
+
+            return
+
+        dialog = NewProjectDialog(project.name)
+
+        if not dialog.exec():
+
+            return
+
+        new_name = dialog.project_name
+
+        if not new_name:
+
+            QMessageBox.warning(
+                self,
+                "Invalid Name",
+                "Project name cannot be empty."
+            )
+
+            return
+
+        self.controller.update(
+            project.id,
+            new_name
+        )
+
+        project.name = new_name
+
+        if (
+            app_state.current_project is not None
+            and
+            app_state.current_project.id == project.id
+        ):
+            app_state.set_current_project(project)
+
+        self.refresh()
+
+    # ==========================================
+
     def delete_project(self):
 
         project = self.selected_project()
@@ -145,7 +201,6 @@ class ProjectManager(QWidget):
 
         self.controller.delete(project.id)
 
-        # Clear active project if it was deleted
         if (
             app_state.current_project is not None
             and

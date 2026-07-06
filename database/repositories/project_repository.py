@@ -44,6 +44,26 @@ class ProjectRepository(BaseRepository):
 
     # ==========================================
 
+    def update(self, project_id, name):
+
+        self.cursor.execute(
+            """
+            UPDATE projects
+            SET
+                name = ?,
+                last_modified = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (
+                name,
+                project_id
+            )
+        )
+
+        self.commit()
+
+    # ==========================================
+
     def delete(self, project_id):
 
         self.cursor.execute(

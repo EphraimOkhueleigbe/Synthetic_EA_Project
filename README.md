@@ -22,7 +22,8 @@ An automated trading system for Deriv Synthetic Indices built with Python and Me
 
 ## Tech Stack
 
-- Python
-- MetaTrader5 API
+- PySide6
+- MetaTrader5
 - pandas
-- NumPy
+- numpy
+- pyqtgraph

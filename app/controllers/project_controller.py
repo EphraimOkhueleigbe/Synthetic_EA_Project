@@ -15,6 +15,13 @@ class ProjectController:
 
         return self.service.get_all()
 
+    def update(self, project_id, name):
+
+        return self.service.update(
+            project_id,
+            name
+        )
+
     def delete(self, project_id):
 
         return self.service.delete(project_id)
