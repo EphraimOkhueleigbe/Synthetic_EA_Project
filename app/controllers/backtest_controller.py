@@ -1,4 +1,4 @@
-from services.backtest_service import BacktestService
+from app.services.backtest_service import BacktestService
 
 
 class BacktestController:
@@ -7,28 +7,22 @@ class BacktestController:
 
         self.service = BacktestService()
 
-    def run(
+    def create(self, backtest):
 
-        self,
+        return self.service.create(backtest)
 
-        strategy,
+    def get_all(self):
 
-        symbol,
+        return self.service.get_all()
 
-        timeframe,
+    def get_by_project(self, project_id):
 
-        candles
+        return self.service.get_by_project(project_id)
 
-    ):
+    def delete(self, backtest_id):
 
-        return self.service.run_backtest(
+        self.service.delete(backtest_id)
 
-            strategy,
+    def get_count(self):
 
-            symbol,
-
-            timeframe,
-
-            candles
-
-        )
+        return self.service.get_count()

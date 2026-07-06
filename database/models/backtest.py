@@ -1,27 +1,34 @@
 from dataclasses import dataclass
+from typing import Optional
+
+from database.models.base_model import BaseModel
 
 
 @dataclass
-class Backtest:
+class Backtest(BaseModel):
 
-    id: int | None = None
+    id: Optional[int] = None
 
-    strategy_id: int | None = None
+    project_id: Optional[int] = None
 
-    test_date: str = ""
+    strategy_id: Optional[int] = None
 
     symbol: str = ""
 
-    timeframe: str = ""
+    start_date: str = ""
 
-    starting_balance: float = 0
+    end_date: str = ""
 
-    ending_balance: float = 0
+    status: str = "Pending"
 
-    net_profit: float = 0
+    created_at: str = ""
 
-    win_rate: float = 0
+    updated_at: str = ""
 
-    profit_factor: float = 0
+    @classmethod
+    def from_row(cls, row):
 
-    max_drawdown: float = 0
+        if row is None:
+            return None
+
+        return cls(**dict(row))

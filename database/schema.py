@@ -80,37 +80,36 @@ def initialize_database():
     # =====================================================
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS backtests(
+    CREATE TABLE IF NOT EXISTS backtests (
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
 
+        project_id INTEGER NOT NULL,
+
         strategy_id INTEGER NOT NULL,
+
+        symbol TEXT NOT NULL,
 
         start_date TEXT,
 
         end_date TEXT,
 
-        initial_balance REAL,
-
-        final_balance REAL,
-
-        total_trades INTEGER,
-
-        win_rate REAL,
-
-        drawdown REAL,
-
-        profit_factor REAL,
+        status TEXT DEFAULT 'Pending',
 
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+        updated_at TEXT,
+
+        FOREIGN KEY(project_id)
+            REFERENCES projects(id)
+            ON DELETE CASCADE,
 
         FOREIGN KEY(strategy_id)
             REFERENCES strategies(id)
             ON DELETE CASCADE
-
-    )
+    );
     """)
-
+    
     # =====================================================
     # Optimizations
     # =====================================================

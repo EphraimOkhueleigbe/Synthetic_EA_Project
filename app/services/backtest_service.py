@@ -7,21 +7,21 @@ class BacktestService:
 
         self.repository = BacktestRepository()
 
-    # ==========================================
-    # CREATE
-    # ==========================================
+    def create(self, backtest):
 
-    def create(self, *args, **kwargs):
-
-        return self.repository.save(*args, **kwargs)
-
-    # ==========================================
-    # READ
-    # ==========================================
+        return self.repository.create(backtest)
 
     def get_all(self):
 
         return self.repository.get_all()
+
+    def get_by_project(self, project_id):
+
+        return self.repository.get_by_project(project_id)
+
+    def delete(self, backtest_id):
+
+        self.repository.delete(backtest_id)
 
     def get_count(self):
 

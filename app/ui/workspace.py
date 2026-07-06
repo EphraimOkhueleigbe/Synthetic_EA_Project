@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
 from app.ui.dashboard import Dashboard
 from app.ui.project_manager import ProjectManager
 from app.ui.strategy_manager import StrategyManager
+from app.ui.backtest_manager import BacktestManager
 
 
 class Workspace(QWidget):
@@ -40,11 +41,11 @@ class Workspace(QWidget):
 
         self.strategies = StrategyManager()
 
+        self.backtests = BacktestManager()
+
         # =====================================
         # Placeholder Pages
         # =====================================
-
-        self.backtests = QLabel("Backtests Page")
 
         self.optimizer = QLabel("Optimizer Page")
 
